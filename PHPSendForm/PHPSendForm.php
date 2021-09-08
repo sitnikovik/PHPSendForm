@@ -23,7 +23,7 @@ class PHPSendForm
 
     }
 
-    //Функция - отправляет письмо через авторизованный smtp сервер
+    // send form with SMTP server
     public function send($params=array())
     {
         require_once __DIR__.'/PHPMailer-master/PHPMailerAutoload.php';
@@ -34,7 +34,6 @@ class PHPSendForm
 
         $mail->IsSMTP(); // telling the class to use SMTP
         $mail->SMTPAuth   = true;                  // enable SMTP authentication
-        // $mail->SMTPSecure = "tls";
         //$mail->SMTPDebug  = 1;
         $mail->SMTPSecure = $this->smtp["secure"];
         $mail->Host       = $this->smtp["host"];      // SMTP server
@@ -57,7 +56,7 @@ class PHPSendForm
             if(!empty($params['attachment'])){
                 foreach ($params['attachment'] as $key => $attachment) {
                     if (preg_match("/http/",$attachment)) {  $mail->addAttachment($attachment); }
-                    else $mail->addAttachment( DIR.$attachment , basename($attachment)) ;
+                    else $mail->addAttachment( $_SERVER["DOCUMENT_ROOT"].$attachment , basename($attachment)) ;
                 }
             }
         }

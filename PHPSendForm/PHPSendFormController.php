@@ -3,12 +3,7 @@
 class PHPSendFormController 
 {
 
-    static $error = array(
-        "500"=>"Something was wrong. Retry again.",
-        "502"=>"BAD GATEWAY",
-        "503"=>"SESSION INCORRUPTED",
-    );
-    static $response = "Form was sent successfully";
+    static $response = "Form was sent successfully"; // template success response
     
     // get data from POST and require 
     static function POST($required = [])

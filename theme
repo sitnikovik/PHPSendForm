@@ -1,10 +1,34 @@
-<?php
-/*
-   YOUR ROUTES
-    The name of method is the same as GET parametr
-*/
+### Get started
+
+1. Download the package in your website folder and include just one file like `/path/to/PHPSendForm/autoload.php`
+
+2. Change data in config.json. There are settings to connect SMTP server
+
+3. Then you need to initialize the event listener in index.php or another file where you want to send form request. 
+
+```markfown
+
+   // include class loader
+   require_once __DIR__.'/PHPSendForm/autoloader.php';
+   
+  // Form event
+  if (isset($_GET["form"])) 
+  { 
+    // var form from GET is the name of event listener in Controller. You may name it howevere you want)
+    $method = trim($_GET["form"]);
+    if (method_exists("PHPSendFormRouter",$method)) die(json_encode(PHPSendFormRouter::$method())); 
+    else die(json_encode(["error"=>"There is not registred form listener"]));
+  }
+    
+```
+
+4. Ok! Now you have to register form route in # PHPSendFormRouter in `routes.php`. This is the class extended the PHPSendFormController created only for registrating form routes. Other opertations coded in Controller. For example, we have form route `/?form=main`. Router method will have the same name with GET parametr.
+
+```markfown
+
 class PHPSendFormRouter extends PHPSendFormController
 {
+    
     static function main()
     {
         $post = self::POST(["name","email"]); // the argument - required form data. if input is empty - there will be error
@@ -33,8 +57,20 @@ class PHPSendFormRouter extends PHPSendFormController
     }
     
     // There will be next route
-
-
 } 
 
-?>
+```
+
+
+## Notes
+
+In package I used JQuery for simple Ajax requests but you can use it with native JavaScript or another framework.
+
+
+### Support or Contact
+If you need a help with the plugin you can message me on VK or Instagram.
+https://vk.com/sitnikovik
+https://www.instagram.com/sitnikovik
+
+### Enjoy!
+
