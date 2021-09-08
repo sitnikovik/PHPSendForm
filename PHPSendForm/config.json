@@ -1,0 +1,11 @@
+{
+    "smtp_host": "smtp.yandex.ru",
+    "smtp_port": 465,
+    "smtp_secure": "tls",
+    "smtp_charset": "UTF-8",
+    "smtp_username": "no-reply@emails.magicwood.ru",
+    "smtp_password": "RRWC22rD",
+
+    "mail_from": "no-reply@emails.magicwood.ru",
+    "mail_from_name": "TEST"
+}
