@@ -1,37 +1,76 @@
-## Welcome to GitHub Pages
+### Get started
 
-You can use the [editor on GitHub](https://github.com/sitnikovik/PHPSendForm/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+1. Download the package in your website folder and include just one file like `/path/to/PHPSendForm/autoload.php`
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+2. Change data in config.json. There are settings to connect SMTP server
 
-### Markdown
+3. Then you need to initialize the event listener in index.php or another file where you want to send form request. 
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+```markfown
 
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+   // include class loader
+   require_once __DIR__.'/PHPSendForm/autoloader.php';
+   
+  // Form event
+  if (isset($_GET["form"])) 
+  { 
+    // var form from GET is the name of event listener in Controller. You may name it howevere you want)
+    $method = trim($_GET["form"]);
+    if (method_exists("PHPSendFormRouter",$method)) die(json_encode(PHPSendFormRouter::$method())); 
+    else die(json_encode(["error"=>"There is not registred form listener"]));
+  }
+    
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+4. Ok! Now you have to register form route in # PHPSendFormRouter in `routes.php`. This is the class extended the PHPSendFormController created only for registrating form routes. Other opertations coded in Controller. For example, we have form route `/?form=main`. Router method will have the same name with GET parametr.
 
-### Jekyll Themes
+```markfown
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/sitnikovik/PHPSendForm/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+class PHPSendFormRouter extends PHPSendFormController
+{
+    
+    static function main()
+    {
+        $post = self::POST(["name","email"]); // the argument - required form data. if input is empty - there will be error
+        if (empty($post) || !empty($post["error"])) return $post;
+
+        // OK. Setup the sending data. settings() merge defaults with argument.
+        $send = self::settings([
+            "to"=>$post["email"] // send message to this email
+        ]);
+        $data = array_merge($post, $send); // merge POST data width sending setup
+        
+        // ---
+        // Custom. If we have to send HTML message, we should replace content in HTML template. This code point may be customized with you prefeures.
+        $keys = [];
+        foreach ($data as $key => $value) $keys[] = "{{$key}}"; 
+        $send["text"] = str_replace($keys, $data, file_get_contents($_SERVER["DOCUMENT_ROOT"].'/order.html'));
+        --- //
+        
+        $form = self::connect(); // Connect the SMTP Server. WARNING! Because of SSL, there are may be some errors with local and prod builds/
+        $ok = $form->send($send); // sending the message. Returns true if OK, or error text
+        if ($ok !== true) return ["error"=>$ok];
+        
+        return ["success"=>self::$response]; 
+        // if OK return the success response with your listener in JavaScript. 
+        // I prefeure this way like array, where key is type of response and value is the value of response ))
+    }
+    
+    // There will be next route
+} 
+
+```
+
+
+## Notes
+
+In package I used JQuery for simple Ajax requests but you can use it with native JavaScript or another framework.
+
 
 ### Support or Contact
+If you need a help with the plugin you can message me on VK or Instagram.
+https://vk.com/sitnikovik
+https://www.instagram.com/sitnikovik
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+### Enjoy!
+
