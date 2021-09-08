@@ -11,5 +11,5 @@
     }
 
 
-    include __DIR__ . '/view.html';
+    include __DIR__ . '/index.html';
 ?>
