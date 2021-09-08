@@ -10,6 +10,5 @@
         else die(json_encode(["error"=>"There is not registred form listener"]));
     }
 
-
     include __DIR__ . '/index.html';
 ?>
